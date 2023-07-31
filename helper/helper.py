@@ -2,10 +2,10 @@ import pandas as pd
 import io
 import numpy as np
 from PIL import Image 
-
+import os
 
 from ultralytics import YOLO
-from ultralytics.yolo.utils.plotting import Annotator, colors
+from ultralytics.utils.plotting import Annotator, colors
 
 
 # model = YOLO('''TODO: path to model''')
@@ -18,7 +18,7 @@ from ultralytics.yolo.utils.plotting import Annotator, colors
 def image_to_byte(img) -> bytes:
     """Convert image to byte array"""
     img_byte_arr = io.BytesIO()
-    img.save(img_byte_arr, format='JPEG', quality=100)
+    img.save(img_byte_arr, format='JPEG', quality=75)
     img_byte_arr.seek(0)
     return img_byte_arr
     
@@ -53,7 +53,7 @@ def convert_predictions_to_df(predictions: list, labels: dict = {0: "Plastic"}) 
 ####### Get Predictions ###########################################
 ###################################################################
 
-def get_predictions(img: Image, model : YOLO, save: bool = False, imgsize : int = 640, conf: float= 0.45, ) -> pd.DataFrame:
+def get_predictions(img: Image, model : YOLO, save: bool = False, imgsize : int = 640, conf: float= 0.37, ) -> pd.DataFrame:
     """Get predictions from image"""
     
     predict = model.predict(source=img,
@@ -76,7 +76,28 @@ def add_boxes_to_predictions(predictions: pd.DataFrame() , img: Image, labels: d
     annotator = Annotator(np.array(img))
     for i, row in predictions.iterrows():
         annotator.box_label([row["xmin"], row["ymin"], row["xmax"], row["ymax"]], 
-                            "Plastic")
+                            color = (255,0,0), )
     res = annotator.result()
     return Image.fromarray(res)
+
+
+###################################################################
+###### Store inference images along with their confidences ########
+###################################################################
+
+def store_images_confidences(file_name : str, image: Image,details: pd.DataFrame, folder_name: str = "Inference" ) -> None:
+    """Store images along with their confidences"""
+    folder_path = os.path.join(folder_name, file_name.split(".")[0] )
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+    
+    image.save(os.path.join(folder_path, f"{file_name}_annotated.jpg"))
+    
+    with open(os.path.join(folder_path, f"{file_name}_details.txt"), "w") as f:
+        f.write(details.to_string())
+        
+        
+    
+
+    
 
