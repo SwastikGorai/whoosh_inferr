@@ -1,10 +1,14 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi.responses import RedirectResponse
+import io
 from io import BytesIO
 from helper.helper import get_predictions, add_boxes_to_predictions, byte_to_image, image_to_byte, store_images_confidences
 from ultralytics import YOLO
 from fastapi.responses import StreamingResponse
 import pandas as pd
 import os
+import cv2
+import numpy as np
 
 ###################################################################
 ####### FastAPI ###################################################
@@ -23,6 +27,10 @@ def startup_event():
     if not os.path.exists('Inference'):
         os.makedirs('Inference')
     print("Startup complete . . .") 
+    
+@app.get("/")
+async def redirect():
+    return RedirectResponse("/docs")
        
     
 
@@ -65,4 +73,6 @@ def predict_and_save(file: UploadFile = File(...)):
     processed_image_byte = image_to_byte(processed)
     store_images_confidences(file_name = file.filename, image=processed, details = predictions)
     return StreamingResponse(content=processed_image_byte , media_type="image/jpeg")
+
+#############################################################################################
     
