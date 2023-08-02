@@ -160,3 +160,5 @@ cython_debug/
 
 *.pt
 Inference/*
+*.mp4
+*.avi

@@ -26,6 +26,8 @@ def startup_event():
     print("Starting up")
     if not os.path.exists('Inference'):
         os.makedirs('Inference')
+    if not os.path.exists('tmp'):
+        os.makedirs('tmp')
     print("Startup complete . . .") 
     
 @app.get("/")
