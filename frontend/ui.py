@@ -46,8 +46,8 @@ def main():
 
 
 def detect_objects(image):
-    API_IMG = "http://localhost:8000/predict_to_image" # hardcoded
-
+    # API_IMG = "http://localhost:8000/predict_to_image" # hardcoded
+    API_IMG = "http://fastapi:8000/predict_to_image"
     # Convert the PIL image to bytes
     img_byte_array = io.BytesIO()
     image.save(img_byte_array, format="JPEG")

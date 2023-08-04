@@ -1,20 +1,26 @@
-version: '4'
+# # 
+
+version: '3'
+
 services:
-  api:
-    build:
-      context: .
-    ports:
-      - "8000:8000"
-    volumes:
-      - "C:/Users/swast/OneDrive/Desktop/infer:/Inference"
-    command: uvicorn main:app --host 0.0.0.0 --port 8000
+  fastapi:
+    build: ./server
+    ports: 
+      - 8000:8000
+    networks:
+      - deploy_network
+    container_name: fastapi
 
+  streamlit:
+    build: ./frontend
+    depends_on:
+      - fastapi
+    ports: 
+        - 8501:8501
+    networks:
+      - deploy_network
+    container_name: streamlit
 
-
-
-  # streamlit:
-  #   build:
-  #     context: .
-  #   ports:
-  #     - "8000:8501" 
-  #   command: streamlit run ui.py --server.port 8501
+networks:
+  deploy_network:
+    driver: bridge
