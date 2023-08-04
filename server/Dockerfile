@@ -1,5 +1,5 @@
 # 
-FROM python:3.11
+FROM python:3.11-slim
 
 # 
 WORKDIR /code
@@ -18,12 +18,6 @@ COPY . /code
 
 #
 WORKDIR /code
-
-#
-# ENV DATABASE_URL=
-
-
-
 
 # 
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "80", "--workers", "4"]
