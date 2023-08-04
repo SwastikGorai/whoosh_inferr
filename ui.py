@@ -17,7 +17,7 @@ def main():
     st.title("Object Detection with FastAPI")
 
     # Choose the input source
-    input_option = st.radio("Select Input Source:", ("Image", "Webcam", "Video"))
+    input_option = st.radio("Select Input Source:", ("Image", "Video"))
 
     if input_option == "Image":
         image_file = st.file_uploader("Upload an image:", type=["jpg", "jpeg", "png"])
@@ -27,8 +27,7 @@ def main():
             if st.button("Detect Objects"):
                 detect_objects(image)
 
-    elif input_option == "Webcam":
-        st.write("Webcam not supported in Streamlit. Please use the Video option instead.")
+
 
     else:  # Video
         video_file = st.file_uploader("Upload a video:", type=["mp4", "avi", "mov"])
