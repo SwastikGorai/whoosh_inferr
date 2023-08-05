@@ -3,7 +3,7 @@ import io
 import numpy as np
 from PIL import Image 
 import os
-
+import json
 from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator, colors
 
@@ -53,7 +53,7 @@ def convert_predictions_to_df(predictions: list, labels: dict = {0: "Plastic"}) 
 ####### Get Predictions ###########################################
 ###################################################################
 
-def get_predictions(img: Image, model : YOLO, save: bool = False, imgsize : int = 640, conf: float= 0.37, ) -> pd.DataFrame:
+def get_predictions(img: Image, model : YOLO, save: bool = False, imgsize : int = 640, conf: float= 0.37, flag: bool = False) -> pd.DataFrame:
     """Get predictions from image"""
     
     predict = model.predict(source=img,
@@ -62,7 +62,20 @@ def get_predictions(img: Image, model : YOLO, save: bool = False, imgsize : int 
                             save=save
                         )
     predict= convert_predictions_to_df(predict)
+    if flag:
+        predict = predict.to_json(orient='records')
     return predict
+
+
+
+###################################################################
+####### Count Predictions #########################################
+###################################################################
+
+
+def count_predictions(predictions: pd.DataFrame) -> int:
+    """Count predictions"""
+    return len(json.loads(predictions))
 
 
 

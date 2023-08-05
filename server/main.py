@@ -8,6 +8,7 @@ from fastapi.responses import StreamingResponse
 import pandas as pd
 import os
 import cv2
+import json
 import numpy as np
 
 ###################################################################
@@ -26,8 +27,7 @@ def startup_event():
     print("Starting up")
     if not os.path.exists('Inference'):
         os.makedirs('Inference')
-    if not os.path.exists('tmp'):
-        os.makedirs('tmp')
+    
     print("Startup complete . . .") 
     
 @app.get("/")
@@ -44,6 +44,18 @@ async def redirect():
 @app.post("/predict_to_json")
 async def predict_to_json(file: UploadFile = File(...)):
     """Predict plastic in image and return json"""
+    
+    model = YOLO("YOLO_Custom_v8m.pt")
+    img = byte_to_image(file.file.read())
+    predictions = get_predictions(img, model, flag = True)
+    loads = json.loads(predictions)
+    # return predictions
+    work = {
+        "no_of_objects": len(loads),
+        "predictions": loads
+    }
+    return work
+    
    
     
     
@@ -51,7 +63,6 @@ async def predict_to_json(file: UploadFile = File(...)):
     # res = pd.DataFrame(predictions)
     # print(len(res['Confidence'].values.tolist()))
     # print(res)
-    
     
     pass
 
@@ -72,6 +83,7 @@ def predict_and_save(file: UploadFile = File(...)):
     img = byte_to_image(file.file.read())
     predictions = get_predictions(img, model)
     processed = add_boxes_to_predictions(predictions, img)
+    
     processed_image_byte = image_to_byte(processed)
     store_images_confidences(file_name = file.filename, image=processed, details = predictions)
     return StreamingResponse(content=processed_image_byte , media_type="image/jpeg")

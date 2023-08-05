@@ -56,6 +56,7 @@ def detect_objects(image):
     response = requests.post(API_IMG, files={"file": img_byte_array})
     if response.status_code == 200:
         st.image(Image.open(io.BytesIO(response.content)), caption="Detected Image", use_column_width=True)
+        # st.text(f"Number of objects detected : {}")
     else:
         st.error("Error detecting objects.")
         

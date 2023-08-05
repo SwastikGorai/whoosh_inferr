@@ -162,3 +162,4 @@ cython_debug/
 Inference/*
 *.mp4
 *.avi
+server/Inference/*
